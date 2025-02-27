@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Node JS</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
+        integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container text-center">
+        <h1>Creating a server with Node.js</h1>
+        <p>Hello, i'm a node js server for searching vehicle plate number</p>
+        <select class="js-select2" style="width: 200px; height: 30px;">
+            <option value="">Please Select City</option>
+        </select>
+        <div class="mt-5">
+            <p style="font-size: 20px; font-weight: bold;">Biển số xe: <span id="plateNo"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "https://localhost:3000",
+                success: function (data, status, xhr) {
+                    console.log("success: ", data);
+                    $('.js-select2').select2({
+                        data: data
+                    });
+                    $('.js-select2').select2("val", 0);
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log("errors: ", errorMessage);
+                }
+            })
+            $('.js-select2').on('select2:select', function (e) {
+                console.log('select event', e.params.data.id);
+                if (e.params.data.id == "")
+                    return;
+                $ajax({
+                    url: "https://localhost:3000",
+                    method: "Post",
+                    data: { id: e.params.data.id },
+                    success: function (data, status, xhr) {
+                        console.log("success find plate: ", data);
+                        $("#plateNo").html(data);
+                    },
+                    error: function (jqXhr, textStatus, errorMassage) {
+                        console.log(`errors find plate no: ${errorMassage}`);
+                    }
+                })
+            });
+        });
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
